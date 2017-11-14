@@ -49,11 +49,11 @@ class ClientTest < Minitest::Test
   end
 
   def test_special_offer_3A_and_a
-    assert_equal 180, app.checkout('AAAA'), 'Basket applies 20 discount for 3 As'
+    assert_equal 180, app.checkout('AAAA'), 'Basket applies 20 discount for 4 As'
   end
 
   def test_special_multiple_offer_a
-    assert_equal 260, app.checkout('AAAAAA'), 'Basket applies 20 discount for 3 As'
+    assert_equal 200, app.checkout('AAAAA'), 'Basket applies 50 discount for 5 As'
   end
 
   def test_special_offer_b
@@ -62,6 +62,22 @@ class ClientTest < Minitest::Test
 
   def test_special_multiple_offer_b
     assert_equal 75, app.checkout('BBB'), 'Basket applies 15 discount for 2 Bs'
+  end
+
+  def test_buy_two_e_get_free_b
+    assert_equal 80, app.checkout('EEB'), 'Basket applies 30 discount for 2 Es bought'
+  end
+
+  def test_buy_four_e_get_two_free_b
+    assert_equal 160, app.checkout('EEEEBB'), 'Basket applies 60 discount for 4 Es and 2Bs bought'
+  end
+
+  def test_buy_two_e_get_one_b_free_and_reduce_b
+    assert_equal 125, app.checkout('EEBBB'), 'Basket applies 60 discount for 4 Es and 2Bs bought'
+  end
+
+  def test_negative_index_exception
+    assert_equal 665, app.checkout('ABCDECBAABCABBAAAEEAA'), 'No negative index exception'
   end
 
 end
