@@ -19,6 +19,11 @@ class GroupDiscountOfferTest < Minitest::Test
     assert_equal 0, offer.apply({}, PRICE_TABLE), 'No reduction for no skus'
   end
 
+  def test_offer_other_skus
+    offer = GroupDiscountOffer.new('STXYZ', 45, 3)
+    assert_equal 0, offer.apply({'A'=>5}, PRICE_TABLE), 'No reduction for no skus'
+  end
+
   def test_offer_one_of_each_same_price_missing_one
     offer = GroupDiscountOffer.new('STXYZ', 45, 3)
     assert_equal 0, offer.apply({'S' => 1, 'T' => 1, 'Y' => 0}, PRICE_TABLE), 'Reduces price to equivalent of 45'

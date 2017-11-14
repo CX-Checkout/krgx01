@@ -5,6 +5,7 @@ class BuyXGetYFreeOffer
     @y = y
   end
   def apply(item_quantities, price_table)
+    puts "BuyXGetYFreeOffer #{@x}, #{item_quantities}"
     total = 0
     items = flatten_histogram(item_quantities)
     if items.count(@x) >= @quantity && items.include?(@y)

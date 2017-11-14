@@ -5,6 +5,8 @@ class MultibuyOffer
   end
 
   def apply(items)
+    puts "MultibuyOffer #{@sku}, #{items}"
+
     items = items.dup.select { |item| item == @sku }
     @reductions.reduce(0) do |total, reduction|
       offer_quantity = offer_quantity(items, reduction)

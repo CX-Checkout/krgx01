@@ -8,6 +8,7 @@ class GroupDiscountOffer
   end
 
   def apply(item_quantities, price_table)
+    puts "GroupDiscountOffer #{@skus}, #{item_quantities}"
     return 0 if item_quantities.empty?
     relevant_items = item_quantities.keep_if { |k, v| @skus.include?(k) }
     skus_sorted_by_price = @skus.sort { |a, b| price_table[b] <=> price_table[a] }
