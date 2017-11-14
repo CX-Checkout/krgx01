@@ -49,7 +49,7 @@ class ClientTest < Minitest::Test
   end
 
   def test_special_offer_3A_and_a
-    assert_equal 180, app.checkout('AAAa'), 'Basket applies 20 discount for 3 As'
+    assert_equal 180, app.checkout('AAAA'), 'Basket applies 20 discount for 3 As'
   end
 
   def test_special_multiple_offer_a
@@ -61,7 +61,7 @@ class ClientTest < Minitest::Test
   end
 
   def test_special_multiple_offer_b
-    assert_equal 45, app.checkout('BBB'), 'Basket applies 15 discount for 2 Bs'
+    assert_equal 75, app.checkout('BBB'), 'Basket applies 15 discount for 2 Bs'
   end
 
 end
