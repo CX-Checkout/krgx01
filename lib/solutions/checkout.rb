@@ -13,7 +13,8 @@ class Checkout
       'B' => 30,
       'C' => 20,
       'D' => 15,
-      'E' => 40
+      'E' => 40,
+      'F' => 10
   }
 
   def initialize(skus)
@@ -39,26 +40,43 @@ class Checkout
     item_quantities = histogram(@items)
 
     if @items.count('E') >= 2 && @items.include?('B')
-        e_count = @items.select { |i| i == 'E' }
-        .each_slice(2)
-        .select { |x| x.length == 2 }
-        .count
+      e_count = @items.select {|i| i == 'E'}
+                    .each_slice(2)
+                    .select {|x| x.length == 2}
+                    .count
 
-        while item_quantities['B'] > 0 && e_count > 0
-          total += 30
-          e_count -= 1
-          item_quantities['B'] -= 1
-        end
+      while item_quantities['B'] > 0 && e_count > 0
+        total += 30
+        e_count -= 1
+        item_quantities['B'] -= 1
+      end
     end
+
+    if @items.count('F') >= 3
+      f_count = @items.select { |i| i == 'F' }
+                    .each_slice(3)
+                    .select { |x| x.length == 3 }
+                    .count
+
+      while item_quantities['F'] > 0 && f_count > 0
+        total += 10
+        f_count -= 1
+        item_quantities['F'] -= 1
+      end
+    end
+
     items = item_quantities.flat_map { |k, v| Array.new(v, k) }
-    multibuy_offers = OFFERS.map { |offer| offer.apply(items) }
-                          .reduce(0, :+)
-    total + multibuy_offers
+    total + multibuy_offers(items)
+  end
+
+  def multibuy_offers(items)
+    OFFERS.map {|offer| offer.apply(items)}
+        .reduce(0, :+)
   end
 
   def histogram(items)
-    Hash[*items.group_by{ |v| v }
-      .flat_map{ |k, v| [k, v.size] }]
+    Hash[*items.group_by {|v| v}
+              .flat_map {|k, v| [k, v.size]}]
   end
 
 end
