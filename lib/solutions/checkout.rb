@@ -1,4 +1,6 @@
 require_relative 'multibuy_offer'
+require_relative 'buy_x_get_y_free_offer'
+require_relative 'group_discount_offer'
 
 class Checkout
 
@@ -8,19 +10,24 @@ class Checkout
       MultibuyOffer.new('B', [{quantity: 2, reduction: 15}]),
       MultibuyOffer.new('H', [{quantity: 10, reduction: 20},
                               {quantity: 5, reduction: 5}]),
-      MultibuyOffer.new('K', [{quantity: 2, reduction: 10}]),
+      MultibuyOffer.new('K', [{quantity: 2, reduction: 20}]),
       MultibuyOffer.new('P', [{quantity: 5, reduction: 50}]),
       MultibuyOffer.new('Q', [{quantity: 3, reduction: 10}]),
       MultibuyOffer.new('V', [{quantity: 3, reduction: 20},
                               {quantity: 2, reduction: 10}])
   ]
-=begin
 
-  BUY_X_GET_Y_FREE_OFFERS = AllBuyXGetYFree.new([
-          BuyXGetYFree.new(buy: 'E', times: 2, get_free: 'B'),
-          BuyXGetYFree.new(buy: 'F', times: 2, get_free: 'F'),
-                          ])
-=end
+  BUY_X_GET_Y_FREE_OFFERS = [
+      BuyXGetYFreeOffer.new( x: 'E', quantity: 2, y: 'B'),
+      BuyXGetYFreeOffer.new( x: 'F', quantity: 3, y: 'F'),
+      BuyXGetYFreeOffer.new( x: 'N', quantity: 3, y: 'M'),
+      BuyXGetYFreeOffer.new( x: 'R', quantity: 3, y: 'Q'),
+      BuyXGetYFreeOffer.new( x: 'U', quantity: 4, y: 'U')
+  ]
+
+  THREE_OF_A_KIND_OFFER = [
+      GroupDiscountOffer.new('STXYZ', 45, 3)
+  ]
 
   PRICE_TABLE = {
       'A' => 50,
@@ -33,7 +40,7 @@ class Checkout
       'H' => 10,
       'I' => 35,
       'J' => 60,
-      'K' => 80,
+      'K' => 70,
       'L' => 90,
       'M' => 15,
       'N' => 40,
@@ -41,14 +48,14 @@ class Checkout
       'P' => 50,
       'Q' => 30,
       'R' => 50,
-      'S' => 30,
+      'S' => 20,
       'T' => 20,
       'U' => 40,
       'V' => 50,
       'W' => 20,
-      'X' => 90,
-      'Y' => 10,
-      'Z' => 50
+      'X' => 17,
+      'Y' => 20,
+      'Z' => 21
   }
 
   def initialize(skus)
@@ -71,19 +78,9 @@ class Checkout
 
   def offers
     item_quantities = histogram(@items)
-
-    total = [
-        { x: 'E', quantity: 2, y: 'B'},
-        { x: 'F', quantity: 3, y: 'F'},
-        { x: 'N', quantity: 3, y: 'M'},
-        { x: 'R', quantity: 3, y: 'Q'},
-        { x: 'U', quantity: 4, y: 'U'}
-    ].map do |offer|
-      apply_offer(offer[:x], offer[:quantity], offer[:y], item_quantities)
-    end.reduce(0, :+)
-
+    buy_x_get_y_free = buy_x_get_y_free_offers(item_quantities)
     items = item_quantities.flat_map { |k, v| Array.new(v, k) }
-    total + multibuy_offers(items)
+    buy_x_get_y_free + multibuy_offers(items) + three_of_a_kind_offers(item_quantities)
   end
 
   def histogram(items)
@@ -91,24 +88,19 @@ class Checkout
               .flat_map {|k, v| [k, v.size]}]
   end
 
-  def apply_offer(x, quantity, y, item_quantities)
-    total = 0
-    if @items.count(x) >= quantity && @items.include?(y)
-      count = @items.select { |i| i == x }
-                    .each_slice(quantity)
-                    .select { |slice| slice.length == quantity }
-                    .count
-      while item_quantities[y] > 0 && count > 0
-        total += PRICE_TABLE[y]
-        count -= 1
-        item_quantities[y] -= 1
-      end
-    end
-    total
+  def buy_x_get_y_free_offers(item_quantities)
+    BUY_X_GET_Y_FREE_OFFERS.map {|offer| offer.apply(item_quantities, PRICE_TABLE)}
+        .reduce(0, :+)
   end
 
   def multibuy_offers(items)
     MULTIBUY_OFFERS.map {|offer| offer.apply(items)}
         .reduce(0, :+)
   end
+
+  def three_of_a_kind_offers(item_quantities)
+    THREE_OF_A_KIND_OFFER.map { |offer| offer.apply(item_quantities, PRICE_TABLE) }
+      .reduce(0, :+)
+  end
 end
+

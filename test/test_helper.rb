@@ -5,6 +5,7 @@ require 'solutions/hello'
 require 'solutions/checkout'
 require 'solutions/app'
 require 'solutions/multibuy_offer'
+require 'solutions/group_discount_offer'
 
 require 'minitest/autorun'
 

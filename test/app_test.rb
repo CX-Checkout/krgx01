@@ -101,11 +101,27 @@ class ClientTest < Minitest::Test
   end
 
   def test_buy_2k
-    assert_equal 150, app.checkout('KK'), 'Checkout applies 30 discount for two Ks'
+    assert_equal 120, app.checkout('KK'), 'Checkout applies 20 discount for two Ks'
   end
 
   def test_u_reduction
     assert_equal 120, app.checkout('UUU'), 'Checkout applies 40 discount for three Us'
+  end
+
+  def test_group_multibuy_stx
+    assert_equal 45, app.checkout('STX'), 'Checkout applies group price of 45 for combination of STX'
+  end
+
+  def test_group_multibuy_stxstx
+    assert_equal 90, app.checkout('STXSTX'), 'Checkout applies group price of 45 for combination of STXSTX'
+  end
+
+  def test_group_multibuy_sss
+    assert_equal 45, app.checkout('SSS'), 'Checkout applies group price of 45 for combination of SSS'
+  end
+
+  def test_error_case
+    assert_equal 795, app.checkout('ABCDEFGHIJKLMNOPQRSTUVW'), 'ABD'
   end
 
 end

@@ -13,8 +13,6 @@ class MultibuyOffer
     end
   end
 
-  private
-
   def offer_quantity(items, reduction)
     items.each_slice(reduction[:quantity])
         .select { |x| x.length == reduction[:quantity] }
