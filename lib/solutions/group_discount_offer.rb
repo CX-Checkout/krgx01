@@ -13,6 +13,9 @@ class GroupDiscountOffer
     relevant_items = item_quantities.keep_if { |k, v| @skus.include?(k) }
     skus_sorted_by_price = @skus.sort { |a, b| price_table[b] <=> price_table[a] }
     offer_groups = []
+
+    return 0 if relevant_items.empty?
+    
     while !relevant_items.values.any? { |v| v == 0 }
       @combination_threshold.times do
         skus_sorted_by_price.each do |sku|
