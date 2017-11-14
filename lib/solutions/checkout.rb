@@ -1,4 +1,4 @@
-require_relative './multibuy_offer'
+require_relative 'multibuy_offer'
 
 class Checkout
 

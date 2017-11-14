@@ -1,4 +1,4 @@
-require './solutions/checkout'
+require_relative 'checkout'
 
 class App
   def checkout(skus)
