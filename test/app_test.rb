@@ -40,8 +40,8 @@ class ClientTest < Minitest::Test
     assert_equal (-1), app.checkout('   '), 'Checkout rejects illegal numeric input'
   end
 
-  def test_noneexistant_item_input
-    assert_equal (-1), app.checkout('FGH'), 'Checkout rejects illegal input'
+  def test_nonexistent_item_input
+    assert_equal (-1), app.checkout('xFGH'), 'Checkout rejects illegal input'
   end
 
   def test_special_offer_a
@@ -90,6 +90,22 @@ class ClientTest < Minitest::Test
 
   def test_multiple_f_reduction_plus_extra_f
     assert_equal 50, app.checkout('FFFFFFF'), 'Checkout applies 20 discount for seven Fs'
+  end
+
+  def test_buy_5h
+    assert_equal 45, app.checkout('HHHHH'), 'Checkout applies 5 discount for five Hs'
+  end
+
+  def test_buy_10h
+    assert_equal 80, app.checkout('HHHHHHHHHH'), 'Checkout applies 20 discount for ten Hs'
+  end
+
+  def test_buy_2k
+    assert_equal 150, app.checkout('KK'), 'Checkout applies 30 discount for two Ks'
+  end
+
+  def test_u_reduction
+    assert_equal 120, app.checkout('UUU'), 'Checkout applies 40 discount for three Us'
   end
 
 end
